@@ -2,8 +2,9 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { TrackRecord, TrackRecordPayload, TrackRecordResponse } from '../../models/track-record';
+import { environment } from '../../../environments/environment';
 
-const API_URL = 'http://localhost:3000/api/track-records';
+const API_URL = `${environment.apiBaseUrl}/api/track-records`;
 
 @Injectable({ providedIn: 'root' })
 export class TrackRecordService {

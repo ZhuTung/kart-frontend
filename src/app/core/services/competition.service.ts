@@ -7,8 +7,9 @@ import {
   CompetitionResponse,
   JoinResponse,
 } from '../../models/competition';
+import { environment } from '../../../environments/environment';
 
-const API_URL = 'http://localhost:3000/api/competitions';
+const API_URL = `${environment.apiBaseUrl}/api/competitions`;
 
 @Injectable({ providedIn: 'root' })
 export class CompetitionService {

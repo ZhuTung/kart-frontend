@@ -2,9 +2,10 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { LikeResponse, Post, PostResponse } from '../../models/post';
+import { environment } from '../../../environments/environment';
 
-const API_URL = 'http://localhost:3000/api/posts';
-export const MEDIA_BASE_URL = 'http://localhost:3000';
+const API_URL = `${environment.apiBaseUrl}/api/posts`;
+export const MEDIA_BASE_URL = environment.apiBaseUrl;
 
 @Injectable({ providedIn: 'root' })
 export class PostService {

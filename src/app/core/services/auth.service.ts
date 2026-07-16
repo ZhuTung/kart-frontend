@@ -4,8 +4,9 @@ import { Router } from '@angular/router';
 import { tap } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 import { AuthResponse, LoginPayload, RegisterPayload, User } from '../../models/user';
+import { environment } from '../../../environments/environment';
 
-const API_URL = 'http://localhost:3000/api';
+const API_URL = `${environment.apiBaseUrl}/api`;
 const TOKEN_KEY = 'kart_token';
 const USER_KEY = 'kart_user';
 
