@@ -1,0 +1,56 @@
+<div class="auth-page">
+  <div class="auth-bg"></div>
+  <div class="auth-card">
+    <a routerLink="/" class="brand">
+      <div class="brand-icon">🏎</div>
+      <h1>KART<span class="accent">SYS</span></h1>
+      <p class="tagline">Initialize your racing profile</p>
+    </a>
+
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" class="auth-form">
+      @if (error()) {
+        <div class="alert alert-error">{{ error() }}</div>
+      }
+
+      <div class="field">
+        <label for="username">Username</label>
+        <input
+          id="username"
+          type="text"
+          formControlName="username"
+          placeholder="Enter your callsign"
+          autocomplete="username"
+        />
+        @if (form.controls.username.touched && form.controls.username.errors?.['required']) {
+          <span class="field-error">Username is required</span>
+        }
+      </div>
+
+      <div class="field">
+        <label for="password">Password</label>
+        <input
+          id="password"
+          type="password"
+          formControlName="password"
+          placeholder="Enter your access code"
+          autocomplete="current-password"
+        />
+        @if (form.controls.password.touched && form.controls.password.errors?.['required']) {
+          <span class="field-error">Password is required</span>
+        }
+      </div>
+
+      <button type="submit" class="btn-primary" [disabled]="loading()">
+        @if (loading()) {
+          <span class="spinner"></span> Authenticating...
+        } @else {
+          Launch Session
+        }
+      </button>
+    </form>
+
+    <p class="auth-footer">
+      New racer? <a routerLink="/register">Create account</a>
+    </p>
+  </div>
+</div>

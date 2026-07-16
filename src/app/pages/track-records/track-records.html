@@ -1,0 +1,178 @@
+<div class="page">
+  <header class="page-header">
+    <div class="header-left">
+      <a routerLink="/dashboard" class="back-link">← Dashboard</a>
+      <div class="logo">
+        <span class="logo-icon">🏁</span>
+        TRACK<span class="accent">LOG</span>
+      </div>
+    </div>
+    <button class="btn-logout" (click)="logout()">Disconnect</button>
+  </header>
+
+  <main class="page-main">
+    <section class="form-panel">
+      <h1>Log Race Session</h1>
+      <p class="panel-subtitle">Record your lap data and session stats</p>
+
+      <form [formGroup]="form" (ngSubmit)="onSubmit()" class="record-form">
+        @if (error()) {
+          <div class="alert alert-error">
+            {{ error() }}
+            @if (fieldErrors().length) {
+              <ul>
+                @for (e of fieldErrors(); track e) {
+                  <li>{{ e }}</li>
+                }
+              </ul>
+            }
+          </div>
+        }
+        @if (success()) {
+          <div class="alert alert-success">{{ success() }}</div>
+        }
+
+        <div class="field">
+          <label for="locationId">Kart Location</label>
+          <select id="locationId" formControlName="locationId">
+            <option [value]="0" disabled>Select a track</option>
+            @for (loc of locations(); track loc.id) {
+              <option [value]="loc.id">{{ loc.name }} — {{ loc.city }}, {{ loc.country }}</option>
+            }
+          </select>
+          @if (form.controls.locationId.touched && form.controls.locationId.errors?.['required']) {
+            <span class="field-error">Please select a kart location</span>
+          }
+          @if (selectedLocation(); as loc) {
+            <p class="location-preview">{{ loc.address }}, {{ loc.city }}</p>
+          }
+        </div>
+
+        <div class="field">
+          <label for="raceDate">Race Date</label>
+          <app-date-picker
+            formControlName="raceDate"
+            inputId="raceDate"
+            placeholder="Select race date"
+            [maxDate]="maxDate"
+          />
+        </div>
+
+        <div class="field-row">
+          <div class="field">
+            <label for="laps">Laps</label>
+            <input id="laps" type="number" formControlName="laps" min="1" />
+          </div>
+          <div class="field">
+            <label for="trackLengthKm">Track Length (km/lap)</label>
+            <input
+              id="trackLengthKm"
+              type="number"
+              formControlName="trackLengthKm"
+              readonly
+              tabindex="-1"
+            />
+            <span class="field-hint">From selected location — used to calculate mileage</span>
+          </div>
+        </div>
+
+        <div class="field-row">
+          <div class="field">
+            <label for="bestLapTime">Best Lap</label>
+            <input id="bestLapTime" type="text" formControlName="bestLapTime" placeholder="e.g. 1:21.456" />
+            <span class="field-hint">Format: M:SS.mmm</span>
+          </div>
+          <div class="field">
+            <label for="averageLapTime">Average Lap</label>
+            <input id="averageLapTime" type="text" formControlName="averageLapTime" placeholder="e.g. 1:23.789" />
+            <span class="field-hint">Auto-calculates total time</span>
+          </div>
+        </div>
+
+        <div class="field-row">
+          <div class="field">
+            <label for="totalTime">Total Time</label>
+            <input id="totalTime" type="text" formControlName="totalTime" placeholder="e.g. 25:30.000" />
+            <span class="field-hint">Auto-filled from avg × laps</span>
+          </div>
+          <div class="field">
+            <label for="mileage">Mileage (km)</label>
+            <input id="mileage" type="number" formControlName="mileage" min="0.01" step="0.001" />
+            <span class="field-hint">Distance traveled</span>
+          </div>
+        </div>
+
+        <button type="submit" class="btn-primary" [disabled]="saving()">
+          @if (saving()) {
+            <span class="spinner"></span> Saving...
+          } @else {
+            Save Track Record
+          }
+        </button>
+      </form>
+    </section>
+
+    @if (!loading() && records().length > 0) {
+      <app-track-record-charts [records]="records()" />
+    }
+
+    <section class="history-panel">
+      <h2>Session History</h2>
+
+      @if (loading()) {
+        <p class="empty-state">Loading records...</p>
+      } @else if (records().length === 0) {
+        <p class="empty-state">No track records yet. Log your first session above.</p>
+      } @else {
+        <div class="record-list">
+          @for (record of records(); track record.id) {
+            <article class="record-card">
+              <div class="record-header">
+                <div>
+                  <span class="record-date">{{ record.raceDate | date:'fullDate' }}</span>
+                  @if (record.location) {
+                    <span class="record-location">{{ record.location.name }}</span>
+                  }
+                </div>
+                <button class="btn-delete" (click)="requestDelete(record.id)">Delete</button>
+              </div>
+              <div class="record-stats">
+                <div class="stat">
+                  <span class="stat-label">Laps</span>
+                  <span class="stat-value">{{ record.laps }}</span>
+                </div>
+                <div class="stat highlight">
+                  <span class="stat-label">Best Lap</span>
+                  <span class="stat-value">{{ record.bestLapTimeFormatted }}</span>
+                </div>
+                <div class="stat">
+                  <span class="stat-label">Avg Lap</span>
+                  <span class="stat-value">{{ record.averageLapTimeFormatted }}</span>
+                </div>
+                <div class="stat">
+                  <span class="stat-label">Total Time</span>
+                  <span class="stat-value">{{ record.totalTimeFormatted }}</span>
+                </div>
+                <div class="stat">
+                  <span class="stat-label">Mileage</span>
+                  <span class="stat-value">{{ record.mileage }} km</span>
+                </div>
+              </div>
+            </article>
+          }
+        </div>
+      }
+    </section>
+  </main>
+
+  <app-confirm-dialog
+    [open]="deleteDialogOpen()"
+    title="Delete Track Record"
+    message="This session will be permanently removed. This action cannot be undone."
+    confirmLabel="Delete"
+    cancelLabel="Cancel"
+    [confirming]="deleting()"
+    (confirmed)="confirmDelete()"
+    (cancelled)="cancelDelete()"
+  />
+</div>

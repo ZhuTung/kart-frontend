@@ -1,0 +1,75 @@
+<div class="dashboard">
+  <header class="dash-header">
+    <div class="logo">
+      <span class="logo-icon">🏎</span>
+      KART<span class="accent">SYS</span>
+    </div>
+    <button class="btn-logout" (click)="logout()">Disconnect</button>
+  </header>
+
+  <main class="dash-main">
+    <section class="welcome-panel">
+      <p class="status-line">
+        <span class="pulse"></span> Session Active
+      </p>
+      <h1>Welcome, {{ displayName() }}</h1>
+      <p class="subtitle">Your racing telemetry hub is online. Log sessions and track your lap performance.</p>
+    </section>
+
+    <section class="action-panel">
+      <a routerLink="/track-records" class="action-card tracklog-card">
+        <span class="action-icon">📊</span>
+        <div>
+          <h2>TRACK<span class="accent">LOG</span></h2>
+          <p>Log race date, laps, lap times, total time & mileage</p>
+        </div>
+        <span class="action-arrow">→</span>
+      </a>
+      <a routerLink="/locations" class="action-card locations-card">
+        <span class="action-icon">📍</span>
+        <div>
+          <h2>KART<span class="accent">MAP</span></h2>
+          <p>Browse karting venues with an interactive map</p>
+        </div>
+        <span class="action-arrow">→</span>
+      </a>
+      <a routerLink="/feed" class="action-card feed-card">
+        <span class="action-icon">📡</span>
+        <div>
+          <h2>KART<span class="accent">FEED</span></h2>
+          <p>Share photos & videos, like posts from the community</p>
+        </div>
+        <span class="action-arrow">→</span>
+      </a>
+      <a routerLink="/competitions" class="action-card comp-card">
+        <span class="action-icon">🏆</span>
+        <div>
+          <h2>GRID<span class="accent">BATTLE</span></h2>
+          <p>Find races, join events & see who's on the grid</p>
+        </div>
+        <span class="action-arrow">→</span>
+      </a>
+    </section>
+
+    @if (user(); as u) {
+      <section class="profile-grid">
+        <div class="stat-card">
+          <span class="stat-label">Callsign</span>
+          <span class="stat-value">{{ u.username }}</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-label">Date of Birth</span>
+          <span class="stat-value">{{ u.dateOfBirth | date:'mediumDate' }}</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-label">Gender</span>
+          <span class="stat-value">{{ u.gender | titlecase }}</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-label">Racer Level</span>
+          <span class="stat-value level-value">{{ (u.level || 'rookie') | titlecase }}</span>
+        </div>
+      </section>
+    }
+  </main>
+</div>

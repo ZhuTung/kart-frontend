@@ -1,0 +1,29 @@
+<section class="charts-panel">
+  <div class="charts-header">
+    <div>
+      <h2>Performance Trends</h2>
+      <p class="charts-subtitle">Average lap & hot lap over time, by venue</p>
+    </div>
+    @if (hasChartableRecords()) {
+      <div class="charts-filter">
+        <label for="venueFilter">Venue</label>
+        <select id="venueFilter" (change)="onFilterChange($event)">
+          <option value="all">All Venues</option>
+          @for (group of venueGroups(); track group.locationId) {
+            <option [value]="group.locationId">{{ group.name }}</option>
+          }
+        </select>
+      </div>
+    }
+  </div>
+
+  @if (!hasChartableRecords()) {
+    <p class="charts-empty">Log sessions with a kart location to see lap time trends.</p>
+  } @else {
+    <div class="charts-grid">
+      @for (group of visibleGroups(); track group.locationId) {
+        <app-venue-lap-chart [venueName]="group.name" [records]="group.records" />
+      }
+    </div>
+  }
+</section>

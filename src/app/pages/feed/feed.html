@@ -1,0 +1,159 @@
+<div class="page">
+  <header class="page-header">
+    <div class="header-left">
+      <a routerLink="/dashboard" class="back-link">← Dashboard</a>
+      <div class="logo">
+        <span class="logo-icon">📡</span>
+        KART<span class="accent">FEED</span>
+      </div>
+    </div>
+    <button class="btn-logout" (click)="logout()">Disconnect</button>
+  </header>
+
+  <main class="page-main">
+    <section class="compose-panel">
+      <h1>Share Your Session</h1>
+      <p class="panel-subtitle">Post photos or videos from the track</p>
+
+      <form [formGroup]="form" (ngSubmit)="onSubmit()" class="compose-form">
+        @if (error()) {
+          <div class="alert alert-error">
+            {{ error() }}
+            @if (fieldErrors().length) {
+              <ul>
+                @for (e of fieldErrors(); track e) {
+                  <li>{{ e }}</li>
+                }
+              </ul>
+            }
+          </div>
+        }
+        @if (success()) {
+          <div class="alert alert-success">{{ success() }}</div>
+        }
+
+        <div class="field">
+          <label for="title">Title</label>
+          <input id="title" type="text" formControlName="title" placeholder="e.g. Podium finish at RUD Shah Alam" />
+          @if (form.controls.title.touched && form.controls.title.errors?.['required']) {
+            <span class="field-error">Title is required</span>
+          }
+        </div>
+
+        <div class="field">
+          <label for="description">Description</label>
+          <textarea
+            id="description"
+            formControlName="description"
+            rows="3"
+            placeholder="Tell the story — conditions, kart setup, highlights..."
+          ></textarea>
+        </div>
+
+        <div class="field">
+          <label for="media">Photo or Video</label>
+          <div class="file-input-wrap">
+            <input
+              id="media"
+              type="file"
+              accept="image/jpeg,image/png,image/gif,image/webp,video/mp4,video/webm,video/quicktime"
+              (change)="onFileSelected($event)"
+            />
+            <span class="file-input-label">Choose image or video (max 50MB)</span>
+          </div>
+        </div>
+
+        @if (selectedFile(); as file) {
+          @if (previewUrl(); as url) {
+            <div class="media-preview">
+              @if (file.type.startsWith('video/')) {
+                <video [src]="url" controls></video>
+              } @else {
+                <img [src]="url" alt="Preview" />
+              }
+              <button type="button" class="btn-clear-preview" (click)="clearPreview()">Remove</button>
+            </div>
+          }
+        }
+
+        <button type="submit" class="btn-primary" [disabled]="posting()">
+          @if (posting()) {
+            <span class="spinner"></span> Posting...
+          } @else {
+            Share Post
+          }
+        </button>
+      </form>
+    </section>
+
+    <section class="feed-panel">
+      <h2>Community Feed</h2>
+
+      @if (loading()) {
+        <p class="empty-state">Loading feed...</p>
+      } @else if (posts().length === 0) {
+        <p class="empty-state">No posts yet. Be the first to share your karting moment!</p>
+      } @else {
+        <div class="post-list">
+          @for (post of posts(); track post.id) {
+            <article class="post-card">
+              <header class="post-header">
+                <a class="author-info" [routerLink]="['/profile', post.author.id]">
+                  <span class="author-avatar">{{ post.author.firstName.charAt(0) }}</span>
+                  <div>
+                    <span class="author-name">{{ post.author.displayName }}</span>
+                    <span class="author-handle">@{{ post.author.username }}</span>
+                  </div>
+                </a>
+                <div class="post-meta">
+                  <time>{{ post.createdAt | date:'medium' }}</time>
+                  @if (isOwnPost(post)) {
+                    <button class="btn-delete" (click)="requestDelete(post.id)">Delete</button>
+                  }
+                </div>
+              </header>
+
+              <h3 class="post-title">{{ post.title }}</h3>
+              @if (post.description) {
+                <p class="post-description">{{ post.description }}</p>
+              }
+
+              <div class="post-media">
+                @if (post.mediaType === 'video') {
+                  <video [src]="mediaSrc(post)" controls playsinline></video>
+                } @else {
+                  <img [src]="mediaSrc(post)" [alt]="post.title" loading="lazy" />
+                }
+              </div>
+
+              <footer class="post-footer">
+                <button
+                  type="button"
+                  class="btn-like"
+                  [class.liked]="post.likedByMe"
+                  [disabled]="likingId() === post.id"
+                  (click)="toggleLike(post)"
+                >
+                  <span class="like-icon">{{ post.likedByMe ? '♥' : '♡' }}</span>
+                  <span class="like-count">{{ post.likeCount }}</span>
+                  <span class="like-label">{{ post.likeCount === 1 ? 'Like' : 'Likes' }}</span>
+                </button>
+              </footer>
+            </article>
+          }
+        </div>
+      }
+    </section>
+  </main>
+
+  <app-confirm-dialog
+    [open]="deleteDialogOpen()"
+    title="Delete Post"
+    message="This post and its media will be permanently removed."
+    confirmLabel="Delete"
+    cancelLabel="Cancel"
+    [confirming]="deleting()"
+    (confirmed)="confirmDelete()"
+    (cancelled)="cancelDelete()"
+  />
+</div>

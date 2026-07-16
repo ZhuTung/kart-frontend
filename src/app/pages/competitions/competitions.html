@@ -1,0 +1,134 @@
+<div class="page">
+  <header class="page-header">
+    <div class="header-left">
+      <a routerLink="/dashboard" class="back-link">← Dashboard</a>
+      <div class="logo">
+        <span class="logo-icon">🏆</span>
+        GRID<span class="accent">BATTLE</span>
+      </div>
+    </div>
+    <button class="btn-logout" (click)="logout()">Disconnect</button>
+  </header>
+
+  <main class="page-main">
+    <section class="form-panel">
+      <h1>Host a Competition</h1>
+      <p class="panel-subtitle">Set up a race event and let racers join the grid</p>
+
+      <form [formGroup]="form" (ngSubmit)="onSubmit()" class="comp-form">
+        @if (error()) {
+          <div class="alert alert-error">
+            {{ error() }}
+            @if (fieldErrors().length) {
+              <ul>
+                @for (e of fieldErrors(); track e) {
+                  <li>{{ e }}</li>
+                }
+              </ul>
+            }
+          </div>
+        }
+        @if (success()) {
+          <div class="alert alert-success">{{ success() }}</div>
+        }
+
+        <div class="field">
+          <label for="title">Competition Title</label>
+          <input id="title" type="text" formControlName="title" placeholder="e.g. Rookie Cup — Shah Alam" />
+        </div>
+
+        <div class="field">
+          <label for="locationId">Kart Venue</label>
+          <select id="locationId" formControlName="locationId">
+            <option [value]="0" disabled>Select venue</option>
+            @for (loc of locations(); track loc.id) {
+              <option [value]="loc.id">{{ loc.name }} — {{ loc.city }}</option>
+            }
+          </select>
+        </div>
+
+        <div class="field-row">
+          <div class="field">
+            <label for="raceDate">Date</label>
+            <app-date-picker
+              formControlName="raceDate"
+              inputId="raceDate"
+              placeholder="Select date"
+              [minDate]="minDate"
+            />
+          </div>
+          <div class="field">
+            <label for="raceTime">Time</label>
+            <input id="raceTime" type="time" formControlName="raceTime" />
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="level">Competition Level</label>
+          <select id="level" formControlName="level">
+            @for (lvl of levels; track lvl.value) {
+              <option [value]="lvl.value">{{ lvl.label }}</option>
+            }
+          </select>
+        </div>
+
+        <button type="submit" class="btn-primary" [disabled]="saving()">
+          @if (saving()) {
+            <span class="spinner"></span> Creating...
+          } @else {
+            Create Competition
+          }
+        </button>
+      </form>
+    </section>
+
+    <section class="list-panel">
+      <div class="list-header">
+        <div>
+          <h2>Find Competitions</h2>
+          <p class="panel-subtitle">Click an event to view details and join</p>
+        </div>
+        <div class="filter-field">
+          <label for="levelFilter">Filter Level</label>
+          <select id="levelFilter" (change)="onFilterChange($event)">
+            <option value="all">All Levels</option>
+            @for (lvl of levels; track lvl.value) {
+              <option [value]="lvl.value">{{ lvl.label }}</option>
+            }
+          </select>
+        </div>
+      </div>
+
+      @if (loading()) {
+        <p class="empty-state">Loading competitions...</p>
+      } @else if (filteredCompetitions().length === 0) {
+        <p class="empty-state">No competitions found. Host one above!</p>
+      } @else {
+        <div class="comp-list">
+          @for (comp of filteredCompetitions(); track comp.id) {
+            <a class="comp-card" [routerLink]="['/competitions', comp.id]">
+              <div class="comp-card-top">
+                <span class="level-badge" [class]="'level-' + comp.level">{{ comp.level }}</span>
+                @if (comp.joinedByMe) {
+                  <span class="joined-badge">Joined</span>
+                }
+              </div>
+              <h3>{{ comp.title }}</h3>
+              <div class="comp-card-meta">
+                <span>{{ comp.location.name }}</span>
+                <span class="meta-dot">·</span>
+                <span>{{ comp.raceDate | date:'mediumDate' }}</span>
+                <span class="meta-dot">·</span>
+                <span>{{ formatTime(comp.raceTime) }}</span>
+              </div>
+              <div class="comp-card-footer">
+                <span class="join-count">{{ comp.joinCount }} racer{{ comp.joinCount === 1 ? '' : 's' }}</span>
+                <span class="view-link">View details →</span>
+              </div>
+            </a>
+          }
+        </div>
+      }
+    </section>
+  </main>
+</div>

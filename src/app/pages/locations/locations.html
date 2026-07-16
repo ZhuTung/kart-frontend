@@ -1,0 +1,96 @@
+<div class="page">
+  <header class="page-header">
+    <div class="header-left">
+      <a routerLink="/dashboard" class="back-link">← Dashboard</a>
+      <div class="logo">
+        <span class="logo-icon">📍</span>
+        KART<span class="accent">MAP</span>
+      </div>
+    </div>
+    <button class="btn-logout" (click)="logout()">Disconnect</button>
+  </header>
+
+  <main class="page-main">
+    <div class="page-intro">
+      <h1>Karting Locations</h1>
+      <p>Explore kart tracks across the region. Powered by free OpenStreetMap data.</p>
+    </div>
+
+    @if (error()) {
+      <div class="alert alert-error">{{ error() }}</div>
+    }
+
+    <div class="locations-layout">
+      <aside class="location-list-panel">
+        <div class="search-box">
+          <input
+            type="search"
+            placeholder="Search by name, city, country..."
+            (input)="onSearch($event)"
+          />
+        </div>
+
+        @if (loading()) {
+          <p class="empty-state">Loading locations...</p>
+        } @else if (filteredLocations().length === 0) {
+          <p class="empty-state">No locations match your search.</p>
+        } @else {
+          <div class="location-list">
+            @for (loc of filteredLocations(); track loc.id) {
+              <button
+                class="location-card"
+                [class.selected]="selectedId() === loc.id"
+                (click)="selectLocation(loc)"
+              >
+                <div class="card-header">
+                  <h3>{{ loc.name }}</h3>
+                  <span class="country-badge">{{ loc.country }}</span>
+                </div>
+                <p class="card-address">{{ loc.address }}</p>
+                <p class="card-city">{{ loc.city }}</p>
+                @if (loc.trackLengthKm) {
+                  <span class="card-meta">Track: {{ loc.trackLengthKm }} km</span>
+                }
+                @if (loc.openingHours) {
+                  <span class="card-meta">{{ loc.openingHours }}</span>
+                }
+                @if (loc.description) {
+                  <p class="card-desc">{{ loc.description }}</p>
+                }
+                <div class="card-actions">
+                  <a
+                    class="card-link card-link-action"
+                    [routerLink]="['/track-records']"
+                    [queryParams]="{ locationId: loc.id }"
+                    (click)="$event.stopPropagation()"
+                  >
+                    Log session →
+                  </a>
+                  @if (loc.phone) {
+                    <span class="card-link">{{ loc.phone }}</span>
+                  }
+                  @if (loc.website) {
+                    <a
+                      class="card-link"
+                      [href]="loc.website"
+                      target="_blank"
+                      rel="noopener"
+                      (click)="$event.stopPropagation()"
+                    >
+                      Website ↗
+                    </a>
+                  }
+                </div>
+              </button>
+            }
+          </div>
+        }
+      </aside>
+
+      <section class="map-panel" #mapPanel>
+        <div #mapContainer class="map-container" [style.height.px]="mapHeight()"></div>
+        <div class="map-attribution">Map © OpenStreetMap · CARTO</div>
+      </section>
+    </div>
+  </main>
+</div>

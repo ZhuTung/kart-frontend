@@ -1,0 +1,209 @@
+<div class="landing">
+  <div class="landing-bg"></div>
+
+  <header class="landing-header">
+    <div class="logo">
+      <span class="logo-icon">🏎</span>
+      KART<span class="accent">SYS</span>
+    </div>
+    <nav class="header-nav">
+      <a href="#features" class="nav-link" (click)="scrollToSection('features', $event)">Features</a>
+      <a href="#competitions" class="nav-link" (click)="scrollToSection('competitions', $event)">Competitions</a>
+      <a href="#how-it-works" class="nav-link" (click)="scrollToSection('how-it-works', $event)">How It Works</a>
+      @if (isLoggedIn()) {
+        <a routerLink="/dashboard" class="btn-header btn-primary-sm">Dashboard</a>
+      } @else {
+        <a routerLink="/login" class="nav-link">Sign In</a>
+        <a routerLink="/register" class="btn-header btn-primary-sm">Get Started</a>
+      }
+    </nav>
+  </header>
+
+  <section class="hero">
+    <p class="hero-badge"><span class="pulse"></span> The Ultimate Karting Telemetry Hub</p>
+    <h1>
+      Log Laps.<br />
+      <span class="hero-accent">Share the Grid.</span><br />
+      Get Faster.
+    </h1>
+    <p class="hero-subtitle">
+      KartSys is your all-in-one platform for session logging, venue discovery, performance
+      analytics, karting competitions, and community — built for racers who take every lap seriously.
+    </p>
+    <div class="hero-actions">
+      @if (isLoggedIn()) {
+        <a routerLink="/dashboard" class="btn-hero btn-primary">Enter Dashboard →</a>
+        <a routerLink="/competitions" class="btn-hero btn-secondary">Find Competitions</a>
+      } @else {
+        <a routerLink="/register" class="btn-hero btn-primary">Start Racing Free →</a>
+        <a routerLink="/login" class="btn-hero btn-secondary">Sign In</a>
+      }
+    </div>
+    <div class="hero-stats">
+      <div class="hero-stat">
+        <span class="stat-num">7+</span>
+        <span class="stat-desc">Core Features</span>
+      </div>
+      <div class="hero-stat">
+        <span class="stat-num">3</span>
+        <span class="stat-desc">Competition Levels</span>
+      </div>
+      <div class="hero-stat">
+        <span class="stat-num">∞</span>
+        <span class="stat-desc">Laps to Log</span>
+      </div>
+    </div>
+  </section>
+
+  <section id="features" class="features-section">
+    <div class="section-header">
+      <p class="section-label">Platform Features</p>
+      <h2>Everything You Need on Track</h2>
+      <p class="section-subtitle">
+        From the moment you buckle in to the post-race debrief — KartSys has you covered.
+      </p>
+    </div>
+    <div class="features-grid">
+      @for (feature of features; track feature.title) {
+        <article class="feature-card" [class]="'accent-' + feature.accent">
+          <span class="feature-icon">{{ feature.icon }}</span>
+          <h3>{{ feature.title }}</h3>
+          <p>{{ feature.description }}</p>
+        </article>
+      }
+    </div>
+  </section>
+
+  <section id="competitions" class="comp-spotlight">
+    <div class="comp-spotlight-inner">
+      <div class="comp-spotlight-content">
+        <p class="section-label">Grid Battle</p>
+        <h2>Find Competitions.<br />Join the Grid.</h2>
+        <p>
+          Browse karting events across real Malaysian venues. Each competition shows the
+          venue, date, time, and skill tier — tap in to see who's racing and accept the
+          rules before you join.
+        </p>
+        <ul class="comp-highlights">
+          <li>Host events with venue, date, time & level</li>
+          <li>Rookie, Junior & Pro competition tiers</li>
+          <li>Rules & T&C confirmation before joining</li>
+          <li>See every racer on the grid with profiles</li>
+        </ul>
+        <div class="level-pills">
+          @for (level of competitionLevels; track level) {
+            <span class="level-pill">{{ level }}</span>
+          }
+        </div>
+        @if (isLoggedIn()) {
+          <a routerLink="/competitions" class="btn-hero btn-primary comp-cta">Browse Competitions →</a>
+        } @else {
+          <a routerLink="/register" class="btn-hero btn-primary comp-cta">Sign Up to Compete →</a>
+        }
+      </div>
+      <div class="comp-spotlight-visual">
+        <div class="comp-preview-card">
+          <div class="comp-preview-header">
+            <span class="level-pill rookie">Rookie</span>
+            <span class="comp-preview-joined">12 racers</span>
+          </div>
+          <h3>Rookie Cup — Shah Alam</h3>
+          <p class="comp-preview-meta">RUD Karting · Jul 12, 2026 · 10:00 AM</p>
+          <div class="comp-preview-grid">
+            <span class="grid-slot filled">L</span>
+            <span class="grid-slot filled">M</span>
+            <span class="grid-slot filled">K</span>
+            <span class="grid-slot">+</span>
+          </div>
+          <span class="comp-preview-action">View details →</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="how-it-works" class="steps-section">
+    <div class="section-header">
+      <p class="section-label">How It Works</p>
+      <h2>Three Laps to Launch</h2>
+    </div>
+    <div class="steps-grid">
+      @for (step of steps; track step.number) {
+        <div class="step-card">
+          <span class="step-number">{{ step.number }}</span>
+          <h3>{{ step.title }}</h3>
+          <p>{{ step.description }}</p>
+        </div>
+      }
+    </div>
+  </section>
+
+  <section class="showcase-section">
+    <div class="showcase-panel">
+      <div class="showcase-content">
+        <p class="section-label">Built for Racers</p>
+        <h2>Sci-Fi Telemetry.<br />Real-World Performance.</h2>
+        <p>
+          A neon-lit interface inspired by racing HUDs — session forms, interactive maps,
+          competition grids, social feeds, and lap-time charts that actually help you improve.
+        </p>
+        <ul class="showcase-list">
+          <li>Auto-calculated mileage & total time</li>
+          <li>Venue-linked track length</li>
+          <li>Competitions with rules & join flow</li>
+          <li>Photo & video posts with likes</li>
+          <li>Per-venue performance graphs</li>
+        </ul>
+      </div>
+      <div class="showcase-visual">
+        <div class="visual-card">
+          <span class="visual-label">TRACKLOG</span>
+          <div class="visual-bar" style="width: 85%"></div>
+          <div class="visual-bar hot" style="width: 72%"></div>
+          <span class="visual-caption">Avg Lap vs Hot Lap</span>
+        </div>
+        <div class="visual-card map">
+          <span class="visual-label">KARTMAP</span>
+          <div class="visual-dots">
+            <span></span><span></span><span></span>
+          </div>
+          <span class="visual-caption">Interactive Venues</span>
+        </div>
+        <div class="visual-card comp">
+          <span class="visual-label">GRIDBATTLE</span>
+          <div class="visual-levels">
+            <span class="v-level rookie">R</span>
+            <span class="v-level junior">J</span>
+            <span class="v-level pro">P</span>
+          </div>
+          <span class="visual-caption">Competitions & Join Grid</span>
+        </div>
+        <div class="visual-card feed">
+          <span class="visual-label">KARTFEED</span>
+          <div class="visual-heart">♥ 24</div>
+          <span class="visual-caption">Share & Like</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="cta-section">
+    <h2>Ready to Hit the Grid?</h2>
+    <p>Join KartSys today — log laps, enter competitions, and turn every session into progress.</p>
+    @if (isLoggedIn()) {
+      <div class="cta-actions">
+        <a routerLink="/dashboard" class="btn-hero btn-primary">Go to Dashboard →</a>
+        <a routerLink="/competitions" class="btn-hero btn-secondary">Find Competitions</a>
+      </div>
+    } @else {
+      <a routerLink="/register" class="btn-hero btn-primary">Create Free Account →</a>
+    }
+  </section>
+
+  <footer class="landing-footer">
+    <div class="logo">
+      <span class="logo-icon">🏎</span>
+      KART<span class="accent">SYS</span>
+    </div>
+    <p>© {{ currentYear }} KartSys — Built for the racing community.</p>
+  </footer>
+</div>

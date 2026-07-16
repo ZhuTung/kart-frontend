@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" role="img" aria-label="KartSys">
+  <rect width="32" height="32" rx="6" fill="#060810"/>
+  <rect x="1" y="1" width="30" height="30" rx="5" fill="none" stroke="#00f0ff" stroke-opacity="0.25"/>
+  <path
+    d="M7 19.5 L11 15.5 H21 L25 19.5 L23.5 21 H8.5 Z"
+    fill="#00f0ff"
+  />
+  <path
+    d="M21 15.5 L27.5 17.2 L25.5 19.5 L22.5 17.2 Z"
+    fill="#00f0ff"
+    opacity="0.85"
+  />
+  <rect x="7.5" y="13.5" width="3.5" height="2" rx="0.5" fill="#39ff14"/>
+  <circle cx="10.5" cy="21.5" r="3" fill="none" stroke="#00f0ff" stroke-width="1.4"/>
+  <circle cx="21.5" cy="21.5" r="3" fill="none" stroke="#00f0ff" stroke-width="1.4"/>
+  <circle cx="10.5" cy="21.5" r="1.1" fill="#39ff14"/>
+  <circle cx="21.5" cy="21.5" r="1.1" fill="#39ff14"/>
+  <path
+    d="M13.5 15.5 H17.5 C18.2 15.5 18.8 15.9 19 16.5 L19.5 17.5 H12.5 L13 16.5 C13.2 15.9 13.8 15.5 14.5 15.5 Z"
+    fill="#0a0e1a"
+    stroke="#00f0ff"
+    stroke-width="0.6"
+  />
+</svg>

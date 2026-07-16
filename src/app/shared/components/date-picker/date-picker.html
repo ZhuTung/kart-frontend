@@ -1,0 +1,105 @@
+<div class="datepicker" #root>
+  <button
+    type="button"
+    class="datepicker-trigger"
+    [id]="inputId() || null"
+    [disabled]="disabled()"
+    [attr.aria-expanded]="open()"
+    aria-haspopup="dialog"
+    (click)="toggle($event)"
+  >
+    <span class="datepicker-value" [class.placeholder]="!value()">
+      {{ displayValue() || placeholder() }}
+    </span>
+    <span class="datepicker-icon" aria-hidden="true">
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+        <rect x="3" y="4" width="18" height="18" rx="2" />
+        <line x1="16" y1="2" x2="16" y2="6" />
+        <line x1="8" y1="2" x2="8" y2="6" />
+        <line x1="3" y1="10" x2="21" y2="10" />
+      </svg>
+    </span>
+  </button>
+
+  @if (open()) {
+    <div class="datepicker-dropdown" role="dialog" (click)="$event.stopPropagation()">
+      @if (pickerView() === 'days') {
+        <div class="datepicker-header">
+          <button type="button" class="nav-btn" aria-label="Previous month" (click)="prevMonth($event)">‹</button>
+          <button type="button" class="month-label-btn" (click)="showMonthPicker($event)">
+            {{ monthLabel() }}
+          </button>
+          <button type="button" class="nav-btn" aria-label="Next month" (click)="nextMonth($event)">›</button>
+        </div>
+
+        <div class="datepicker-weekdays">
+          @for (day of weekdays; track day) {
+            <span class="weekday">{{ day }}</span>
+          }
+        </div>
+
+        <div class="datepicker-grid">
+          @for (day of calendarDays(); track day.iso + day.inMonth) {
+            <button
+              type="button"
+              class="day-btn"
+              [class.other-month]="!day.inMonth"
+              [class.selected]="day.iso === value()"
+              [class.today]="day.iso === todayIso()"
+              [disabled]="day.disabled"
+              (click)="selectDay(day, $event)"
+            >
+              {{ day.date.getDate() }}
+            </button>
+          }
+        </div>
+      }
+
+      @if (pickerView() === 'months') {
+        <div class="datepicker-header">
+          <button type="button" class="nav-btn" aria-label="Previous year" (click)="prevYear($event)">‹</button>
+          <button type="button" class="month-label-btn" (click)="showYearPicker($event)">
+            {{ viewYear() }}
+          </button>
+          <button type="button" class="nav-btn" aria-label="Next year" (click)="nextYear($event)">›</button>
+        </div>
+
+        <div class="picker-grid month-grid">
+          @for (month of monthNames; track month; let i = $index) {
+            <button
+              type="button"
+              class="picker-btn"
+              [class.selected]="i === viewMonth()"
+              [disabled]="isMonthDisabled(i)"
+              (click)="selectMonth(i, $event)"
+            >
+              {{ month }}
+            </button>
+          }
+        </div>
+      }
+
+      @if (pickerView() === 'years') {
+        <div class="datepicker-header">
+          <button type="button" class="nav-btn" aria-label="Previous years" (click)="prevYearPage($event)">‹</button>
+          <span class="month-label">{{ yearRangeLabel() }}</span>
+          <button type="button" class="nav-btn" aria-label="Next years" (click)="nextYearPage($event)">›</button>
+        </div>
+
+        <div class="picker-grid year-grid">
+          @for (year of yearOptions(); track year) {
+            <button
+              type="button"
+              class="picker-btn"
+              [class.selected]="year === viewYear()"
+              [disabled]="isYearDisabled(year)"
+              (click)="selectYear(year, $event)"
+            >
+              {{ year }}
+            </button>
+          }
+        </div>
+      }
+    </div>
+  }
+</div>

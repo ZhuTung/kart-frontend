@@ -1,0 +1,7 @@
+<div class="chart-card">
+  <h3 class="chart-title">{{ venueName() }}</h3>
+  <p class="chart-subtitle">{{ records().length }} session{{ records().length === 1 ? '' : 's' }}</p>
+  <div class="chart-canvas-wrap">
+    <canvas #canvas></canvas>
+  </div>
+</div>

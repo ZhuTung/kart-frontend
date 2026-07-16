@@ -1,0 +1,120 @@
+<div class="page">
+  <header class="page-header">
+    <div class="header-left">
+      <a routerLink="/competitions" class="back-link">← Competitions</a>
+      <div class="logo">
+        <span class="logo-icon">🏆</span>
+        GRID<span class="accent">BATTLE</span>
+      </div>
+    </div>
+    <button class="btn-logout" (click)="logout()">Disconnect</button>
+  </header>
+
+  <main class="page-main">
+    @if (loading()) {
+      <p class="empty-state">Loading competition...</p>
+    } @else if (error() && !competition()) {
+      <p class="empty-state error">{{ error() }}</p>
+    } @else if (competition(); as comp) {
+      @if (error()) {
+        <div class="alert alert-error">{{ error() }}</div>
+      }
+
+      <section class="detail-hero">
+        <span class="level-badge" [class]="'level-' + comp.level">{{ comp.level }}</span>
+        <h1>{{ comp.title }}</h1>
+        <p class="join-summary">{{ comp.joinCount }} racer{{ comp.joinCount === 1 ? '' : 's' }} on the grid</p>
+      </section>
+
+      <section class="detail-panel">
+        <h2>Event Details</h2>
+        <div class="details-grid">
+          <div class="detail-card">
+            <span class="detail-label">Venue</span>
+            <span class="detail-value">{{ comp.location.name }}</span>
+            <span class="detail-sub">{{ comp.location.city }}, {{ comp.location.country }}</span>
+          </div>
+          <div class="detail-card">
+            <span class="detail-label">Date</span>
+            <span class="detail-value">{{ comp.raceDate | date:'fullDate' }}</span>
+          </div>
+          <div class="detail-card">
+            <span class="detail-label">Time</span>
+            <span class="detail-value">{{ formatTime(comp.raceTime) }}</span>
+          </div>
+          <div class="detail-card">
+            <span class="detail-label">Level</span>
+            <span class="detail-value level-text">{{ comp.level }}</span>
+          </div>
+          <div class="detail-card">
+            <span class="detail-label">Hosted by</span>
+            <a class="detail-value link" [routerLink]="['/profile', comp.creator.id]">
+              {{ comp.creator.displayName }}
+            </a>
+            <span class="detail-sub">@{{ comp.creator.username }}</span>
+          </div>
+        </div>
+
+        <div class="detail-actions">
+          @if (comp.joinedByMe) {
+            <button class="btn-join joined" [disabled]="actionLoading()" (click)="leave()">
+              @if (actionLoading()) { Leaving... } @else { Joined ✓ — Leave Grid }
+            </button>
+          } @else {
+            <button class="btn-join" [disabled]="actionLoading()" (click)="requestJoin()">
+              Join Competition
+            </button>
+          }
+          @if (isCreator()) {
+            <button class="btn-delete" (click)="requestDelete()">Delete Competition</button>
+          }
+        </div>
+      </section>
+
+      <section class="participants-panel">
+        <h2>Racers on the Grid</h2>
+        @if (comp.participants.length === 0) {
+          <p class="empty-state">No racers yet — be the first to join!</p>
+        } @else {
+          <ul class="participant-list">
+            @for (p of comp.participants; track p.id) {
+              <li>
+                <a class="participant" [routerLink]="['/profile', p.id]">
+                  <span class="participant-avatar">{{ p.firstName.charAt(0) }}</span>
+                  <div class="participant-info">
+                    <span class="participant-name">{{ p.displayName }}</span>
+                    <span class="participant-handle">@{{ p.username }}</span>
+                  </div>
+                  <span class="participant-level" [class]="'level-' + p.level">{{ p.level }}</span>
+                </a>
+              </li>
+            }
+          </ul>
+        }
+      </section>
+    }
+  </main>
+
+  @if (competition(); as comp) {
+    <app-competition-join-dialog
+      [open]="joinDialogOpen()"
+      [competitionTitle]="comp.title"
+      [competitionLevel]="comp.level"
+      [venueName]="comp.location.name"
+      [confirming]="actionLoading()"
+      (confirmed)="confirmJoin()"
+      (cancelled)="cancelJoin()"
+    />
+  }
+
+  <app-confirm-dialog
+    [open]="deleteDialogOpen()"
+    title="Delete Competition"
+    message="This competition and all join records will be permanently removed."
+    confirmLabel="Delete"
+    cancelLabel="Cancel"
+    [confirming]="deleting()"
+    (confirmed)="confirmDelete()"
+    (cancelled)="cancelDelete()"
+  />
+</div>

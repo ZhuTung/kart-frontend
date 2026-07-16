@@ -1,0 +1,105 @@
+<div class="page">
+  <header class="page-header">
+    <div class="header-left">
+      <a routerLink="/feed" class="back-link">← Feed</a>
+      <div class="logo">
+        <span class="logo-icon">👤</span>
+        RACER<span class="accent">PROFILE</span>
+      </div>
+    </div>
+    <button class="btn-logout" (click)="logout()">Disconnect</button>
+  </header>
+
+  <main class="page-main">
+    @if (loading()) {
+      <p class="empty-state">Loading profile...</p>
+    } @else if (error()) {
+      <p class="empty-state error">{{ error() }}</p>
+    } @else if (user(); as u) {
+      <section class="profile-hero">
+        <span class="profile-avatar">{{ u.firstName.charAt(0) }}</span>
+        <div class="profile-identity">
+          <h1>{{ u.displayName }}</h1>
+          <p class="profile-handle">@{{ u.username }}</p>
+          <span class="level-badge level-{{ u.level || 'rookie' }}">{{ u.level || 'rookie' }}</span>
+          @if (isOwnProfile()) {
+            <span class="own-badge">Your profile</span>
+          }
+        </div>
+      </section>
+
+      <section class="profile-details">
+        <h2>Profile Details</h2>
+        <div class="details-grid">
+          <div class="detail-card">
+            <span class="detail-label">Callsign</span>
+            <span class="detail-value">{{ u.username }}</span>
+          </div>
+          <div class="detail-card">
+            <span class="detail-label">Date of Birth</span>
+            <span class="detail-value">{{ u.dateOfBirth | date:'mediumDate' }}</span>
+          </div>
+          <div class="detail-card">
+            <span class="detail-label">Gender</span>
+            <span class="detail-value">{{ u.gender | titlecase }}</span>
+          </div>
+          <div class="detail-card">
+            <span class="detail-label">Racer Level</span>
+            <span class="detail-value level-value">{{ (u.level || 'rookie') | titlecase }}</span>
+          </div>
+          @if (u.createdAt) {
+            <div class="detail-card">
+              <span class="detail-label">Member Since</span>
+              <span class="detail-value">{{ u.createdAt | date:'mediumDate' }}</span>
+            </div>
+          }
+        </div>
+      </section>
+
+      <section class="records-section">
+        <h2>Track Records</h2>
+
+        @if (trackRecords().length === 0) {
+          <p class="empty-state">No track records logged yet.</p>
+        } @else {
+          <div class="record-list">
+            @for (record of trackRecords(); track record.id) {
+              <article class="record-card">
+                <div class="record-header">
+                  <div>
+                    <span class="record-date">{{ record.raceDate | date:'fullDate' }}</span>
+                    @if (record.location) {
+                      <span class="record-location">{{ record.location.name }}</span>
+                    }
+                  </div>
+                </div>
+                <div class="record-stats">
+                  <div class="stat">
+                    <span class="stat-label">Laps</span>
+                    <span class="stat-value">{{ record.laps }}</span>
+                  </div>
+                  <div class="stat highlight">
+                    <span class="stat-label">Best Lap</span>
+                    <span class="stat-value">{{ record.bestLapTimeFormatted }}</span>
+                  </div>
+                  <div class="stat">
+                    <span class="stat-label">Avg Lap</span>
+                    <span class="stat-value">{{ record.averageLapTimeFormatted }}</span>
+                  </div>
+                  <div class="stat">
+                    <span class="stat-label">Total Time</span>
+                    <span class="stat-value">{{ record.totalTimeFormatted }}</span>
+                  </div>
+                  <div class="stat">
+                    <span class="stat-label">Mileage</span>
+                    <span class="stat-value">{{ record.mileage }} km</span>
+                  </div>
+                </div>
+              </article>
+            }
+          </div>
+        }
+      </section>
+    }
+  </main>
+</div>

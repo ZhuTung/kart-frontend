@@ -1,0 +1,79 @@
+<div class="auth-page">
+  <div class="auth-bg"></div>
+  <div class="auth-card">
+    <div class="brand">
+      <div class="brand-icon">🏁</div>
+      <h1>JOIN<span class="accent">GRID</span></h1>
+      <p class="tagline">Register your racer credentials</p>
+    </div>
+
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" class="auth-form">
+      @if (error()) {
+        <div class="alert alert-error">
+          {{ error() }}
+          @if (fieldErrors().length) {
+            <ul>
+              @for (e of fieldErrors(); track e) {
+                <li>{{ e }}</li>
+              }
+            </ul>
+          }
+        </div>
+      }
+
+      <div class="field-row">
+        <div class="field">
+          <label for="firstName">First Name</label>
+          <input id="firstName" type="text" formControlName="firstName" placeholder="First name" />
+        </div>
+        <div class="field">
+          <label for="lastName">Last Name</label>
+          <input id="lastName" type="text" formControlName="lastName" placeholder="Last name" />
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="username">Username</label>
+        <input id="username" type="text" formControlName="username" placeholder="Choose a callsign" autocomplete="username" />
+      </div>
+
+      <div class="field">
+        <label for="password">Password</label>
+        <input id="password" type="password" formControlName="password" placeholder="Min. 6 characters" autocomplete="new-password" />
+      </div>
+
+      <div class="field-row">
+        <div class="field">
+          <label for="dateOfBirth">Date of Birth</label>
+          <app-date-picker
+            formControlName="dateOfBirth"
+            inputId="dateOfBirth"
+            placeholder="Select date of birth"
+            [maxDate]="maxDate"
+          />
+        </div>
+        <div class="field">
+          <label for="gender">Gender</label>
+          <select id="gender" formControlName="gender">
+            <option value="" disabled>Select</option>
+            @for (g of genders; track g.value) {
+              <option [value]="g.value">{{ g.label }}</option>
+            }
+          </select>
+        </div>
+      </div>
+
+      <button type="submit" class="btn-primary" [disabled]="loading()">
+        @if (loading()) {
+          <span class="spinner"></span> Registering...
+        } @else {
+          Enter the Grid
+        }
+      </button>
+    </form>
+
+    <p class="auth-footer">
+      Already registered? <a routerLink="/login">Sign in</a>
+    </p>
+  </div>
+</div>

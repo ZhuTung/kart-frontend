@@ -1,1 +1,58 @@
-/* You can add global styles to this file, and also import other style files */
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700&family=Rajdhani:wght@400;500;600;700&display=swap');
+
+:root {
+  --neon-cyan: #00f0ff;
+  --neon-magenta: #ff00aa;
+  --neon-lime: #39ff14;
+  --neon-blue: #0080ff;
+  --bg-dark: #060810;
+  --bg-panel: #0a0e1a;
+  --text-primary: #e8f4ff;
+  --text-muted: #7a8ba3;
+  --font-display: 'Orbitron', sans-serif;
+  --font-body: 'Rajdhani', sans-serif;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  min-height: 100%;
+  font-family: var(--font-body);
+  font-size: 16px;
+  color: var(--text-primary);
+  background-color: var(--bg-dark);
+  background-image:
+    linear-gradient(rgba(0, 240, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 240, 255, 0.03) 1px, transparent 1px);
+  background-size: 40px 40px;
+  -webkit-font-smoothing: antialiased;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background:
+    radial-gradient(ellipse at 50% 0%, rgba(0, 128, 255, 0.12) 0%, transparent 60%),
+    radial-gradient(ellipse at 100% 100%, rgba(255, 0, 170, 0.06) 0%, transparent 50%);
+  pointer-events: none;
+  z-index: -1;
+}
+
+input, select, button {
+  font-family: inherit;
+}
+
+a {
+  color: inherit;
+}
